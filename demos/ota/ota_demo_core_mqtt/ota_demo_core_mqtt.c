@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <unistd.h>
 
 /* Include Demo Config as the first non-system header. */
 #include "demo_config.h"
@@ -1547,7 +1548,7 @@ static int startOTADemo( void )
                 if( pthread_mutex_lock( &mqttMutex ) == 0 )
                 {
                     /* Loop to receive packet from transport interface. */
-                    mqttStatus = MQTT_ProcessLoop( &mqttContext, 0 );
+                    mqttStatus = MQTT_ProcessLoop( &mqttContext, 100 );
 
                     pthread_mutex_unlock( &mqttMutex );
                 }
@@ -1568,6 +1569,8 @@ static int startOTADemo( void )
                                otaStatistics.otaPacketsQueued,
                                otaStatistics.otaPacketsProcessed,
                                otaStatistics.otaPacketsDropped ) );
+
+                    usleep(5000);
                 }
                 else
                 {
