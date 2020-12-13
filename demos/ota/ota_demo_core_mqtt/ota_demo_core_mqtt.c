@@ -132,7 +132,7 @@
 /**
  * @brief Timeout for MQTT_ProcessLoop function in milliseconds.
  */
-#define MQTT_PROCESS_LOOP_TIMEOUT_MS        ( 500U )
+#define MQTT_PROCESS_LOOP_TIMEOUT_MS        ( 100U )
 
 /**
  * @brief Size of the network buffer to receive the MQTT message.
@@ -148,6 +148,11 @@
  * statistics like number of packets received, dropped, processed and queued per connection.
  */
 #define OTA_EXAMPLE_TASK_DELAY_MS                ( 1000U )
+
+/**
+ * @brief The delay used in the main OTA Demo task loop sleep.
+ */
+#define OTA_EXAMPLE_TASK_SLEEP_US                ( 5000U )
 
 /**
  * @brief The timeout for waiting for the agent to get suspended after closing the
@@ -1548,7 +1553,7 @@ static int startOTADemo( void )
                 if( pthread_mutex_lock( &mqttMutex ) == 0 )
                 {
                     /* Loop to receive packet from transport interface. */
-                    mqttStatus = MQTT_ProcessLoop( &mqttContext, 100 );
+                    mqttStatus = MQTT_ProcessLoop( &mqttContext, MQTT_PROCESS_LOOP_TIMEOUT_MS );
 
                     pthread_mutex_unlock( &mqttMutex );
                 }
@@ -1570,7 +1575,7 @@ static int startOTADemo( void )
                                otaStatistics.otaPacketsProcessed,
                                otaStatistics.otaPacketsDropped ) );
 
-                    usleep(5000);
+                    usleep( OTA_EXAMPLE_TASK_SLEEP_US );
                 }
                 else
                 {

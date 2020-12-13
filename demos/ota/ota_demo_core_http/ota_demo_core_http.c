@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <unistd.h>
 
 /* Include Demo Config as the first non-system header. */
 #include "demo_config.h"
@@ -147,6 +148,11 @@
  * statistics like number of packets received, dropped, processed and queued per connection.
  */
 #define OTA_EXAMPLE_TASK_DELAY_MS                ( 1000U )
+
+/**
+ * @brief The delay used in the main OTA Demo task loop sleep.
+ */
+#define OTA_EXAMPLE_TASK_SLEEP_US                ( 5000U )
 
 /**
  * @brief The timeout for waiting for the agent to get suspended after closing the
@@ -1979,7 +1985,7 @@ static int startOTADemo( void )
                 if( pthread_mutex_lock( &mqttMutex ) == 0 )
                 {
                     /* Loop to receive packet from transport interface. */
-                    mqttStatus = MQTT_ProcessLoop( &mqttContext, 0 );
+                    mqttStatus = MQTT_ProcessLoop( &mqttContext, MQTT_PROCESS_LOOP_TIMEOUT_MS );
 
                     pthread_mutex_unlock( &mqttMutex );
                 }
@@ -2000,6 +2006,8 @@ static int startOTADemo( void )
                                otaStatistics.otaPacketsQueued,
                                otaStatistics.otaPacketsProcessed,
                                otaStatistics.otaPacketsDropped ) );
+
+                    usleep( OTA_EXAMPLE_TASK_SLEEP_US );
                 }
                 else
                 {
